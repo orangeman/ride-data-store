@@ -1,0 +1,41 @@
+{
+  "name": "ride-data-store",
+  "version": "0.0.1",
+  "description": "ridematching transport logistics database",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "./node_modules/coffeescript/bin/coffee -c *.coffee",
+    "test": "coffee test/index.coffee | node_modules/tap-spec/bin/cmd.js"
+  },
+  "dependencies": {
+    "coffeescript": "^1.12.*",
+    "geoplaces": "0.0.10",
+    "level": "^1.6.0"
+  },
+  "devDependencies": {
+    "better-spawn": "^0.3.1",
+    "nanobench": "^2.1.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.3",
+    "through2": "^2.0.3",
+    "through2-concurrent": "^1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orangeman/ride-data-store.git"
+  },
+  "keywords": [
+    "carpool",
+    "ridesharing",
+    "transportation"
+  ],
+  "author": "flo@sonnenstreifen.de",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/orangeman/ride-data-store/issues"
+  },
+  "homepage": "https://github.com/orangeman/ride-data-store#readme"
+}
