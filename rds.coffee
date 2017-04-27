@@ -1,4 +1,5 @@
 crypt = require 'crypto'
+stream = require 'stream'
 
 generateId = () ->
   crypt.randomBytes(7).toString('hex') + new Date().getTime()
@@ -8,9 +9,9 @@ generateId = () ->
 module.exports = (placeDB, rideDB) ->
 
   resolveRoute = (ride, cb) ->
-    placeDB.lookup ride.from, (from) ->
+    placeDB.lookup ride?.from, (from) ->
       return cb from if from.error
-      placeDB.lookup ride.to, (to) ->
+      placeDB.lookup ride?.to, (to) ->
         return cb to if to.error
         cb "#{from.name}/#{to.name}/"
 
@@ -29,15 +30,10 @@ module.exports = (placeDB, rideDB) ->
 
   find: find = (query, cb) ->
     resolveRoute query, (route) ->
-      cb rideDB.createValueStream gte: route, lt: route + "~"
-
-  findAll: (query, cb) ->
-    return cb [] unless query.from && query.to
-    find query, (stream) ->
-      results = []
-      cb results if !stream
-      stream.on "data", (r) -> results.push JSON.parse r
-      stream.on "end", () -> cb results
+      if route.error
+        cb new stream.Readable read: () -> @push null
+      else
+        cb rideDB.createValueStream gte: route, lt: route + "~"
 
   close: () ->
     rideDB.close()
