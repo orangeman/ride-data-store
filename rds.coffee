@@ -20,7 +20,8 @@ module.exports = (placeDB, rideDB) ->
       return cb route if route.error
       ride.id = generateId() if !ride.id
       ride.price = (Math.random() * 5).toFixed 2
-      rideDB.put route + ride.id, JSON.stringify(ride) + "\n", (e) ->
+      if ride.status == "public"
+        rideDB.put route + ride.id, JSON.stringify(ride) + "\n", (e) ->
       rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) ->
         cb id: ride.id
 

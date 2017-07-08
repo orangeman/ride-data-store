@@ -3,7 +3,7 @@ http = require "request"
 module.exports = (test) ->
 
   URL = "http://localhost:7777"
-  ride = from: "Wien", to: "Linz"
+  ride = from: "Wien", to: "Linz", status: "public"
 
 
   test "post ride", (t) ->
@@ -13,7 +13,8 @@ module.exports = (test) ->
       t.end()
 
   test "post unknown place", (t) ->
-    http.post URL, body: JSON.stringify(from: "nixgibts", to: "munich"), (err, res, body) ->
+    r = from: "nixgibts", to: "munich", status: "public"
+    http.post URL, body: JSON.stringify(r), (err, res, body) ->
       t.equal JSON.parse(body).error, "nixgibts not found"
       t.equal res.statusCode, 404, "http status NOT FOUND"
       t.end()

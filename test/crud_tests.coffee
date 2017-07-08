@@ -20,12 +20,20 @@ module.exports = (test, rds) ->
       t.ok ride.id != r2.id, "different ids"
       t.end()
 
+  test "not find rides", (t) ->
+    rds.find from: "Wien", to: "Linz", (stream) ->
+      stream.on "data", (r) ->
+        t.fail "should not find unpublished rides"
+      setTimeout (() -> t.end()), 300
+
   test "update ride", (t) ->
-    ride.foo = "bar" # change
+    ride2.status = "public" # change
+    rds.save ride2, (i) ->
+    ride.status = "public" # change
     rds.save ride, (i) ->
       t.equal i.id, ride.id, "still same id"
       rds.get ride.id, (r) ->
-        t.equal r.foo, "bar", "updated"
+        t.equal r.status, "public"
         t.end()
 
   test "find rides", (t) ->
@@ -35,8 +43,8 @@ module.exports = (test, rds) ->
         t.equal JSON.parse(r).from, "Wien"
 
   test "alternative place names", (t) ->
-    t.plan 4
-    rds.save from: "Vienna", to: "Linz لينتز", (r) ->
+    t.plan 3
+    rds.save from: "Vienna", to: "Linz لينتز", status: "public", (r) ->
       rds.find from: "Wien", to: "Linz, AT", (stream) ->
         stream.on "data", (result) -> t.ok result
 
