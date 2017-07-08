@@ -29,24 +29,16 @@ module.exports = (test, rds) ->
         t.end()
 
   test "find rides", (t) ->
-    rds.save from: "Wien", to: "Linz", user: "another", (r2) ->
-      rds.findAll ride, (rides) ->
-        t.equal rides.length, 3, "three"
-        t.equal rides[0].from, "Wien"
-        t.equal rides[0].to, "Linz"
-        t.end()
-
-  test "find rides stream", (t) ->
-    t.plan 3 # three results
+    t.plan 2 # three results
     rds.find from: "Wien", to: "Linz", (stream) ->
       stream.on "data", (r) ->
         t.equal JSON.parse(r).from, "Wien"
 
   test "alternative place names", (t) ->
+    t.plan 4
     rds.save from: "Vienna", to: "Linz لينتز", (r) ->
-      rds.findAll from: "Wien", to: "Linz, AT", (rides) ->
-        t.equal rides.length, 4, "should find it all"
-        t.end()
+      rds.find from: "Wien", to: "Linz, AT", (stream) ->
+        stream.on "data", (result) -> t.ok result
 
   test "unknown place names", (t) ->
     rds.save from: "anywhere", to: "munich", (r) ->
