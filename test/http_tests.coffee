@@ -12,6 +12,12 @@ module.exports = (test) ->
       t.equal res.statusCode, 200, "http status OK"
       t.end()
 
+  test "post invalid ride", (t) ->
+    http.post URL, body: "not a ride", (err, res, body) ->
+      t.ok JSON.parse(body), "json response with id " + body
+      t.equal res.statusCode, 400, "http status BAD REQUEST"
+      t.end()
+
   test "post unknown place", (t) ->
     r = from: "nixgibts", to: "munich", status: "public"
     http.post URL, body: JSON.stringify(r), (err, res, body) ->
