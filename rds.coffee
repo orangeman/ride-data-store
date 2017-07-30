@@ -21,7 +21,9 @@ module.exports = (placeDB, rideDB) ->
       ride.id = generateId() if !ride.id
       ride.price = (Math.random() * 5).toFixed 2
       if ride.status == "public"
-        rideDB.put route + ride.id, JSON.stringify(ride) + "\n", (e) ->
+        rideDB.put route + ride.id, JSON.stringify(ride) + "\n"
+      if ride.status == "deleted"
+        rideDB.del route + ride.id
       rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) ->
         cb id: ride.id
 

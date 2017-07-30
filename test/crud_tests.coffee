@@ -57,3 +57,11 @@ module.exports = (test, rds) ->
     rds.save from: "anywhere", to: "munich", (r) ->
       t.equal r.error, "anywhere not found"
       t.end()
+
+  test "delete ride", (t) ->
+    t.plan 2
+    ride.status = "deleted" # change
+    rds.save ride, (i) ->
+      rds.find from: "Wien", to: "Linz", (stream) ->
+        stream.on "data", (r) ->
+          t.ok "found other ride"
