@@ -20,6 +20,11 @@ module.exports = (test, rds) ->
       t.ok ride.id != r2.id, "different ids"
       t.end()
 
+  test "wrong id", (t) ->
+    rds.get "notexist", (g) ->
+      t.notOk g
+      t.end()
+
   test "not find rides", (t) ->
     rds.find from: "Wien", to: "Linz", (stream) ->
       stream.on "data", (r) ->

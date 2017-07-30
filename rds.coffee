@@ -27,7 +27,9 @@ module.exports = (placeDB, rideDB) ->
 
   get: (id, cb) ->
     rideDB.get "id:" + id, (err, ride) ->
-      cb JSON.parse ride
+      if ride
+        cb JSON.parse ride
+      else cb null
 
   find: find = (query, cb) ->
     resolveRoute query, (route) ->
