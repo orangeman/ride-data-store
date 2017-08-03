@@ -18,7 +18,9 @@ module.exports = (placeDB, rideDB) ->
   save: (ride, cb) ->
     resolveRoute ride, (route) ->
       return cb route if route.error
-      ride.id = generateId() if !ride.id
+      if !ride.id
+        ride.status = "new"
+        ride.id = generateId()
       ride.price = (Math.random() * 5).toFixed 2
       if ride.status == "public"
         rideDB.put route + ride.id, JSON.stringify(ride) + "\n"

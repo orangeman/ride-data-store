@@ -13,6 +13,7 @@ module.exports = (test, rds) ->
   test "get ride", (t) ->
     rds.get ride.id, (g) ->
       t.equal g.from, "Wien"
+      t.equal g.status, "new"
       t.end()
 
   test "ride id", (t) ->
@@ -49,7 +50,7 @@ module.exports = (test, rds) ->
 
   test "alternative place names", (t) ->
     t.plan 3
-    rds.save from: "Vienna", to: "Linz لينتز", status: "public", (r) ->
+    rds.save id: "A", from: "Vienna", to: "Linz لينتز", status: "public", (r) ->
       rds.find from: "Wien", to: "Linz, AT", (stream) ->
         stream.on "data", (result) -> t.ok result
 
