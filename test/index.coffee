@@ -14,7 +14,8 @@ test "CRUD API", (t) ->
 test "HTTP API", (t) ->
 
   setup (rds) ->
-    s = require("http").Server rds.http
+    auth = (ride, cb) -> cb t.test.auth() #mock
+    s = require("http").Server rds.http auth
     s.listen 7777, () ->
       require("./http_tests") t.test
       t.on "end", () -> s.close()
@@ -30,11 +31,3 @@ setup = (cb) ->
 conf =
   countries: at: "at"
   languages: de: "de", en: "en"
-
-setupTestServer = (cb) ->
-  db = "db/server_tests.db"
-  exec "rm -r #{db}", () ->
-    server = spawn "coffee ./server.coffee #{db}"
-    server.stdout.pipe process.stdout
-    server.stderr.pipe process.stderr
-    setTimeout ( () -> cb server ), 1500

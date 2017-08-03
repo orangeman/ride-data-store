@@ -9,6 +9,7 @@ module.exports = (test) ->
   test "post ride", (t) ->
     http.post URL, body: JSON.stringify(ride), (err, res, body) ->
       t.ok JSON.parse(body).id, "json response with id " + body
+      ride.id = JSON.parse(body).id
       t.equal res.statusCode, 200, "http status OK"
       t.end()
 
@@ -16,6 +17,19 @@ module.exports = (test) ->
     http.post URL, body: "not a ride", (err, res, body) ->
       t.ok JSON.parse(body), "json response with id " + body
       t.equal res.statusCode, 400, "http status BAD REQUEST"
+      t.end()
+
+  test "update ride", (t) ->
+    test.auth = () -> false #mock
+    http.post URL, body: JSON.stringify(ride), (err, res, body) ->
+      t.equal res.statusCode, 401, "http status UNAUTHORIZED"
+      t.end()
+
+  test "update ride authorized", (t) ->
+    test.auth = () -> true #mock
+    http.post URL, body: JSON.stringify(ride), (err, res, body) ->
+      t.equal res.statusCode, 200, "http status OK"
+      t.equal JSON.parse(body).id, ride.id
       t.end()
 
   test "post unknown place", (t) ->

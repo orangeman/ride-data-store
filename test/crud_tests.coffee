@@ -8,6 +8,7 @@ module.exports = (test, rds) ->
   test "save ride", (t) ->
     rds.save ride, (r) ->
       t.ok r.id, "should have id"
+      t.equal r.status, "new"
       t.end()
 
   test "get ride", (t) ->
