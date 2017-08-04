@@ -5,25 +5,37 @@ test = require 'tape'
 
 test "CRUD API", (t) ->
 
-  setup (rds) ->
+  init (rds) ->
     require("./crud_tests") t.test, rds
     t.on "end", rds.close
     t.end()
 
 
-test "HTTP API", (t) ->
+test "REST API", (t) ->
 
-  setup (rds) ->
-    auth = (ride, cb) -> cb t.test.auth() #mock
-    s = require("http").Server rds.http auth
-    s.listen 7777, () ->
+  init (rds) ->
+    start t, rds, (server) ->
       require("./http_tests") t.test
-      t.on "end", () -> s.close()
+      t.on "end", () ->
+        server.close()
+        rds.close()
+      t.end()
+
+
+test "REST CLIENT", (t) ->
+
+  init (rds) ->
+    start t, rds, (server) ->
+      http = require "request"
+      url = "http://localhost:7777"
+      client = require("../client") http, url
+      require("./crud_tests") t.test, client
+      t.on "end", () -> server.close()
       t.end()
 
 
 
-setup = (cb) ->
+init = (cb) ->
   db = "db/tests.db"
   exec "rm -r #{db}", () ->
     require("../") db, conf, cb
@@ -31,3 +43,8 @@ setup = (cb) ->
 conf =
   countries: at: "at"
   languages: de: "de", en: "en"
+
+start = (t, rds, ready) ->
+  auth = (ride, cb) -> cb t.test.auth() #mock
+  s = require("http").Server rds.http auth
+  s.listen 7777, () -> ready s

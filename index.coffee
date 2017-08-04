@@ -10,6 +10,7 @@ module.exports = (dbPath, opts, cb) ->
     rds.placeDB = places
 
     rds.http = (auth) -> (req, res) ->
+      res.setHeader "content-type", "text/json"
       if req.method == "POST"
         req.on "data", (ride) ->
           try
@@ -17,7 +18,7 @@ module.exports = (dbPath, opts, cb) ->
             store = () ->
               rds.save ride, (r) ->
                 res.statusCode = 404 if r.error
-                console.log "SAVED #{ride}", r
+                console.log "SAVED", r
                 res.end JSON.stringify r
             if ride.id
               auth ride.id, (access) ->
@@ -31,9 +32,11 @@ module.exports = (dbPath, opts, cb) ->
             res.statusCode = 400
             res.end JSON.stringify error: "error"
       else # req.method == "GET"
-        if m = req.url.match /\/(.*?)\/(.*?)(\?|\/|$)/
+        if id = req.url.match(/rides\/(.*?)(\?|$)/)?[1]
+          rds.get id, (r) ->
+            res.end JSON.stringify r
+        else if m = req.url.match /\/(.*?)\/(.*?)(\?|\/|$)/ # SEARCH
           query = from: decodeURI(m[1]), to: decodeURI(m[2])
-          res.setHeader "content-type", "text/json"
           rds.find query, (stream) -> stream.pipe res
 
     cb rds

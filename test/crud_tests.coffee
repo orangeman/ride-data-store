@@ -9,6 +9,7 @@ module.exports = (test, rds) ->
     rds.save ride, (r) ->
       t.ok r.id, "should have id"
       t.equal r.status, "new"
+      ride.id = r.id
       t.end()
 
   test "get ride", (t) ->
@@ -20,6 +21,7 @@ module.exports = (test, rds) ->
   test "ride id", (t) ->
     rds.save ride2, (r2) ->
       t.ok ride.id != r2.id, "different ids"
+      ride2.id = r2.id
       t.end()
 
   test "wrong id", (t) ->
@@ -34,6 +36,7 @@ module.exports = (test, rds) ->
       setTimeout (() -> t.end()), 300
 
   test "update ride", (t) ->
+    test.auth = () -> true #mock
     ride2.status = "public" # change
     rds.save ride2, (i) ->
     ride.status = "public" # change
