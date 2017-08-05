@@ -27,7 +27,7 @@ module.exports = (placeDB, rideDB) ->
       if ride.status == "deleted"
         rideDB.del route + ride.id
       rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) ->
-        cb id: ride.id, status: ride.status
+        cb id: ride.id, status: ride.status, email: ride.email
 
   get: (id, cb) ->
     rideDB.get "id:" + id, (err, ride) ->
