@@ -46,5 +46,5 @@ conf =
 
 start = (t, rds, ready) ->
   auth = (ride, cb) -> cb t.test.auth() #mock
-  s = require("http").Server rds.http auth
+  s = require("http").Server rds.rest auth
   s.listen 7777, () -> ready s

@@ -9,7 +9,7 @@ module.exports = (dbPath, opts, cb) ->
 
     rds.placeDB = places
 
-    rds.http = (auth) -> (req, res) ->
+    rds.rest = (auth, hook) -> (req, res) ->
       res.setHeader "content-type", "text/json"
       if req.method == "POST"
         req.on "data", (ride) ->
@@ -20,6 +20,7 @@ module.exports = (dbPath, opts, cb) ->
                 res.statusCode = 404 if r.error
                 console.log "SAVED", r
                 res.end JSON.stringify r
+                hook? r
             if ride.id
               auth ride.id, (access) ->
                 if access
