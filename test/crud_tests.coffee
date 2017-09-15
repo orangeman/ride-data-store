@@ -35,7 +35,7 @@ module.exports = (test, rds) ->
         t.fail "should not find unpublished rides"
       setTimeout (() -> t.end()), 300
 
-  test "update ride", (t) ->
+  test "publish rides", (t) ->
     test.auth = () -> true #mock
     ride2.status = "public" # change
     rds.save ride2, (i) ->
@@ -47,7 +47,7 @@ module.exports = (test, rds) ->
         t.end()
 
   test "find rides", (t) ->
-    t.plan 2 # three results
+    t.plan 2 # two results
     rds.find from: "Wien", to: "Linz", (stream) ->
       stream.on "data", (r) ->
         t.equal JSON.parse(r).from, "Wien"
@@ -57,6 +57,14 @@ module.exports = (test, rds) ->
     rds.save id: "A", from: "Vienna", to: "Linz لينتز", status: "public", (r) ->
       rds.find from: "Wien", to: "Linz, AT", (stream) ->
         stream.on "data", (result) -> t.ok result
+
+  test "update ride", (t) ->
+    test.auth = () -> true #mock
+    ride.seats = 3 # change
+    rds.save ride, (i) ->
+      rds.get ride.id, (r) ->
+        t.equal r.seats, 3
+        t.end()
 
   test "unknown place names", (t) ->
     rds.save from: "anywhere", to: "munich", (r) ->
