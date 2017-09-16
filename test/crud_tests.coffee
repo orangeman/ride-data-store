@@ -72,6 +72,14 @@ module.exports = (test, rds) ->
       stream.on "data", (r) ->
         t.equal JSON.parse(r).email, "Hans"
 
+  test "find rides by type", (t) ->
+    t.plan 4 # 1 request + 3 offers
+    rds.save type: "request", time: 3, from: "Wien", to: "Linz", status: "public", (r) ->
+      rds.find from: "Wien", to: "Linz", type: "request", (stream) ->
+        stream.on "data", (result) -> t.ok result
+      rds.find from: "Wien", to: "Linz", type: "offer", (stream) ->
+        stream.on "data", (result) -> t.ok result
+
   test "unknown place names", (t) ->
     rds.save from: "anywhere", to: "munich", (r) ->
       t.equal r.error, "anywhere not found"
