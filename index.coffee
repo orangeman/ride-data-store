@@ -40,6 +40,8 @@ module.exports = (dbPath, opts, cb) ->
           query = from: decodeURI(m[1]), to: decodeURI(m[2])
           if m = req.url.match /time=(.*)(&|$)/
             query.time = m[1]
+          if m = req.url.match /type=(.*)(&|$)/
+            query.type = m[1]
           rds.find query, (stream) -> stream.pipe res
 
     cb rds

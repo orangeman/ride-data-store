@@ -21,13 +21,15 @@ module.exports = (placeDB, rideDB) ->
       ride.route = route
       if ride.id
         get ride.id, (r) ->
-          rideDB.del route + r.time + "/" + r.id
+          rideDB.del route + r.type + "/" + r.time + "/" + r.id
           ride.status = r.status if !ride.status
           ride.price = r.price if !ride.price
           ride.time = r.time if !ride.time
+          ride.type = r.type if !ride.type
           cb ride
       else
         ride.id = generateId()
+        ride.type = "offer" if !ride.type
         ride.status = "new" if !ride.status
         ride.price = (Math.random() * 5).toFixed 2
         ride.time = new Date().getTime() if ! ride.time
@@ -36,7 +38,7 @@ module.exports = (placeDB, rideDB) ->
   save: (ride, cb) ->
     prepare ride, (r) ->
       return cb r if r.error
-      key = r.route + r.time + "/" + r.id
+      key = r.route + r.type + "/" + r.time + "/" + r.id
       if ride.status == "public"
         rideDB.put key, JSON.stringify(ride) + "\n"
       rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) ->
@@ -53,7 +55,9 @@ module.exports = (placeDB, rideDB) ->
       if route.error
         cb new stream.Readable read: () -> @push null
       else
+        route += (query.type || "offer") + "/"
         route += query.time + "/" if query.time
+        console.log route
         cb rideDB.createValueStream gte: route, lt: route + "~"
 
   close: () ->

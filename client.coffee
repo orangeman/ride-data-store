@@ -19,6 +19,8 @@ module.exports = (http, url) ->
       route = "/#{query.from}/#{query.to}"
       if query.time
         route += "?time=" + query.time
+      if query.type
+        route += "?type=" + query.type
       cb http.get url + route
     else cb
       on: (what, fun) -> if what == "end" then fun() else this
