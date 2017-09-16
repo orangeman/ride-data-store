@@ -2,8 +2,8 @@
 
 module.exports = (test, rds) ->
 
-  ride = from: "Wien", to: "Linz", user: "Hans"
-  ride2 = from: "Wien", to: "Linz", user: "Max"
+  ride = from: "Wien", to: "Linz", email: "Hans", time: 5
+  ride2 = from: "Wien", to: "Linz", email: "Max", time: 1
 
   test "save ride", (t) ->
     rds.save ride, (r) ->
@@ -54,7 +54,7 @@ module.exports = (test, rds) ->
 
   test "alternative place names", (t) ->
     t.plan 3
-    rds.save id: "A", from: "Vienna", to: "Linz لينتز", status: "public", (r) ->
+    rds.save time: 3, from: "Vienna", to: "Linz لينتز", status: "public", (r) ->
       rds.find from: "Wien", to: "Linz, AT", (stream) ->
         stream.on "data", (result) -> t.ok result
 
@@ -65,6 +65,12 @@ module.exports = (test, rds) ->
       rds.get ride.id, (r) ->
         t.equal r.seats, 3
         t.end()
+
+  test "find rides after time", (t) ->
+    t.plan 1 # one result
+    rds.find from: "Wien", to: "Linz", time: 5, (stream) ->
+      stream.on "data", (r) ->
+        t.equal JSON.parse(r).email, "Hans"
 
   test "unknown place names", (t) ->
     rds.save from: "anywhere", to: "munich", (r) ->
