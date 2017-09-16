@@ -15,21 +15,34 @@ module.exports = (placeDB, rideDB) ->
         return cb to if to.error
         cb "#{from.name}/#{to.name}/"
 
-  save: (ride, cb) ->
+  prepare = (ride, cb) ->
     resolveRoute ride, (route) ->
       return cb route if route.error
-      if !ride.id
-        ride.status = "new"
+      ride.route = route
+      if ride.id
+        get ride.id, (r) ->
+          rideDB.del route + r.time + "/" + r.id
+          ride.status = r.status if !ride.status
+          ride.price = r.price if !ride.price
+          ride.time = r.time if !ride.time
+          cb ride
+      else
         ride.id = generateId()
-      ride.price = (Math.random() * 5).toFixed 2
+        ride.status = "new" if !ride.status
+        ride.price = (Math.random() * 5).toFixed 2
+        ride.time = new Date().getTime() if ! ride.time
+        cb ride
+
+  save: (ride, cb) ->
+    prepare ride, (r) ->
+      return cb r if r.error
+      key = r.route + r.time + "/" + r.id
       if ride.status == "public"
-        rideDB.put route + ride.id, JSON.stringify(ride) + "\n"
-      if ride.status == "deleted"
-        rideDB.del route + ride.id
+        rideDB.put key, JSON.stringify(ride) + "\n"
       rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) ->
         cb id: ride.id, status: ride.status, email: ride.email
 
-  get: (id, cb) ->
+  get: get = (id, cb) ->
     rideDB.get "id:" + id, (err, ride) ->
       if ride
         cb JSON.parse ride
@@ -40,6 +53,7 @@ module.exports = (placeDB, rideDB) ->
       if route.error
         cb new stream.Readable read: () -> @push null
       else
+        route += query.time + "/" if query.time
         cb rideDB.createValueStream gte: route, lt: route + "~"
 
   close: () ->

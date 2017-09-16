@@ -16,6 +16,9 @@ module.exports = (http, url) ->
 
   find: find = (query, cb) ->
     if query.from && query.to
-      cb http.get url + "/#{query.from}/#{query.to}"
+      route = "/#{query.from}/#{query.to}"
+      if query.time
+        route += "?time=" + query.time
+      cb http.get url + route
     else cb
       on: (what, fun) -> if what == "end" then fun() else this
