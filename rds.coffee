@@ -31,7 +31,6 @@ module.exports = (placeDB, rideDB) ->
         ride.id = generateId()
         ride.type = "offer" if !ride.type
         ride.status = "new" if !ride.status
-        ride.price = (Math.random() * 5).toFixed 2
         ride.time = new Date().getTime() if ! ride.time
         cb ride
 
