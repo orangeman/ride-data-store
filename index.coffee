@@ -22,7 +22,7 @@ module.exports = (dbPath, opts, cb) ->
                 res.end JSON.stringify r
                 hook? r
             if ride.id
-              auth ride.id, (access) ->
+              auth ride, (access) ->
                 if access
                   store()
                 else
