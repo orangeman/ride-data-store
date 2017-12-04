@@ -41,7 +41,7 @@ module.exports = (placeDB, rideDB) ->
       if ride.status == "public"
         rideDB.put key, JSON.stringify(ride) + "\n"
       rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) ->
-        cb id: ride.id, status: ride.status, email: ride.email, lang: ride.lang,type: ride.type, name: ride.name
+        cb ride
 
   get: get = (id, cb) ->
     rideDB.get "id:" + id, (err, ride) ->
