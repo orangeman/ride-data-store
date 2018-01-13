@@ -66,9 +66,15 @@ module.exports = (test, rds) ->
         t.equal r.seats, 3
         t.end()
 
-  test "find rides after time", (t) ->
+  test "find rides at euqal time", (t) ->
     t.plan 1 # one result
     rds.find from: "Wien", to: "Linz", time: 5, (stream) ->
+      stream.on "data", (r) ->
+        t.equal JSON.parse(r).email, "Hans"
+
+  test "find rides after time", (t) ->
+    t.plan 1 # one result
+    rds.find from: "Wien", to: "Linz", time: 4, (stream) ->
       stream.on "data", (r) ->
         t.equal JSON.parse(r).email, "Hans"
 
