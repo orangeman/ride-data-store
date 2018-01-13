@@ -40,7 +40,7 @@ module.exports = (placeDB, rideDB) ->
       key = r.route + r.type + "/" + r.time + "/" + r.id
       if ride.status == "public"
         rideDB.put key, JSON.stringify(ride) + "\n"
-      rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) -> cb r
+      rideDB.put "id:" + ride.id, JSON.stringify(ride), (err) -> cb ride
 
   get: get = (id, cb) ->
     rideDB.get "id:" + id, (err, ride) ->
@@ -54,9 +54,11 @@ module.exports = (placeDB, rideDB) ->
         cb new stream.Readable read: () -> @push null
       else
         route += (query.type || "offer") + "/"
-        route += query.time + "/" if query.time
+        if query.time
+          cb rideDB.createValueStream gte: (route + query.time), lt: route + "~"
+        else
+          cb rideDB.createValueStream gte: (route), lt: route + "~"
         console.log route
-        cb rideDB.createValueStream gte: route, lt: route + "~"
 
   close: () ->
     rideDB.close()
