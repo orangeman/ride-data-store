@@ -1,6 +1,6 @@
 {
   "name": "ride-data-store",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "ridematching transport logistics database",
   "main": "index.js",
   "directories": {
