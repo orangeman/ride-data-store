@@ -13,7 +13,8 @@
   "dependencies": {
     "coffeescript": "^1.12.*",
     "geoplaces": "0.0.11",
-    "level": "^1.6.0"
+    "level": "^1.6.0",
+    "node": "^8.6.0"
   },
   "devDependencies": {
     "better-spawn": "^0.3.1",
