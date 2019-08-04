@@ -55,10 +55,10 @@ module.exports = (placeDB, rideDB) ->
       else
         route += (query.type || "offer") + "/"
         if query.time
-          cb rideDB.createValueStream gte: (route + query.time), lt: route + "~"
+          cb rideDB.createValueStream gte: (route + query.time), lt: route + "~" , reverse: true
         else
           cb rideDB.createValueStream gte: (route), lt: route + "~"
-        console.log route
+
 
   close: () ->
     rideDB.close()
